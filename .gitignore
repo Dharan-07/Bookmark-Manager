@@ -32,3 +32,14 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # Finder (MacOS) folder config
 .DS_Store
+
+/src/generated/prisma
+
+# generated Prisma client (regenerated via `prisma generate`, not source code)
+src/generated/
+
+# AI tool skill folders (auto-created by `prisma init`, not part of your app)
+.agents/
+.claude/
+.windsurf/
+skills-lock.json
