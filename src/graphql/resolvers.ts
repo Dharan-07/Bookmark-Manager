@@ -66,6 +66,27 @@ export const resolvers = {
         },
       });
     },
+
+    updateBookmark: async (
+      _parent: unknown,
+      args: {
+        id: string;
+        title?: string;
+        url?: string;
+        tags?: string[];
+      }
+    ) => {
+      return prisma.bookmark.update({
+        where: {
+          id: args.id,
+        },
+        data: {
+          title: args.title,
+          url: args.url,
+          tags: args.tags,
+        },
+      });
+    },
   },
 
   Folder: {
