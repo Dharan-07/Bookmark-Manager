@@ -1,5 +1,13 @@
+import { prisma } from "../db/prisma";
+
 export const resolvers = {
   Query: {
-    health: (): string => "Bookmark Manager API is healthy",
+    folders: async () => {
+      return prisma.folder.findMany({
+        orderBy: {
+          createdAt: "asc",
+        },
+      });
+    },
   },
 };
