@@ -32,16 +32,27 @@ export const resolvers = {
       });
     },
 
-    bookmarks: async (_parent: unknown, args:{folderId?: string})=>{
+    bookmarks: async (_parent: unknown, args: { folderId?: string; search?: string }) => {
       return prisma.bookmark.findMany({
-        where: args.folderId
-        ?{
-          folderId: args.folderId
-        }
-        : undefined,
+        where: {
+          ...(args.folderId ?
+            {
+              folderId: args.folderId
+            }
+            : {}),
+
+          ...(args.search ?
+            {
+              title: {
+                contains: args.search,
+                mode: "insensitive"
+              }
+            }
+            : {})
+        },
         orderBy: [
-          {createdAt:"asc"},
-          {id:"asc"}
+          { createdAt: "asc" },
+          { id: "asc" }
         ]
       })
     }
@@ -101,26 +112,28 @@ export const resolvers = {
         },
       });
     },
-    
-    deleteBookmark: async (_parent: unknown,args:{id: string}): Promise<boolean>=>{
-      const bookmark = await prisma.bookmark.findUnique({where: {
-        id: args.id,
-      }});
 
-      if(!bookmark){throw new Error("bookmark not found")}
+    deleteBookmark: async (_parent: unknown, args: { id: string }): Promise<boolean> => {
+      const bookmark = await prisma.bookmark.findUnique({
+        where: {
+          id: args.id,
+        }
+      });
 
-      await prisma.bookmark.delete({where:{id: args.id}})
+      if (!bookmark) { throw new Error("bookmark not found") }
+
+      await prisma.bookmark.delete({ where: { id: args.id } })
 
       return true;
     },
 
-    moveBookmark: async(_parent: unknown, args: {
+    moveBookmark: async (_parent: unknown, args: {
       id: string;
       folderId: string;//target_folder_id 
-    })=>{
+    }) => {
       const result = prisma.bookmark.update({
-        where: {id: args.id},
-        data:{folderId:args.folderId}
+        where: { id: args.id },
+        data: { folderId: args.folderId }
       })
       return result;
     },
