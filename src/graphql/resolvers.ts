@@ -99,6 +99,17 @@ export const resolvers = {
 
       return true;
     },
+
+    moveBookmark: async(_parent: unknown, args: {
+      id: string;
+      folderId: string;//target_folder_id 
+    })=>{
+      const result = prisma.bookmark.update({
+        where: {id: args.id},
+        data:{folderId:args.folderId}
+      })
+      return result;
+    },
   },
 
   Folder: {
