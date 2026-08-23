@@ -37,7 +37,8 @@ export const resolvers = {
       args: { 
         folderId?: string; 
         search?: string;
-        take?:number
+        take?: number;
+        cursor?: string
       }) => {
       return prisma.bookmark.findMany({
         where: {
@@ -58,6 +59,15 @@ export const resolvers = {
         },
 
         take: args.take,
+
+        ...(args.cursor?
+          {
+            cursor:{
+              id: args.cursor
+            },
+            skip: 1,
+          }
+          :{}),
         orderBy: [
           { createdAt: "asc" },
           { id: "asc" }
