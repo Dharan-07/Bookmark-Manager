@@ -32,7 +32,13 @@ export const resolvers = {
       });
     },
 
-    bookmarks: async (_parent: unknown, args: { folderId?: string; search?: string }) => {
+    bookmarks: async (
+      _parent: unknown, 
+      args: { 
+        folderId?: string; 
+        search?: string;
+        take?:number
+      }) => {
       return prisma.bookmark.findMany({
         where: {
           ...(args.folderId ?
@@ -50,6 +56,8 @@ export const resolvers = {
             }
             : {})
         },
+
+        take: args.take,
         orderBy: [
           { createdAt: "asc" },
           { id: "asc" }
