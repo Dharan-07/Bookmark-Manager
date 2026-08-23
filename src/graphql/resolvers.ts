@@ -87,6 +87,13 @@ export const resolvers = {
         },
       });
     },
+    
+    deleteBookmark: async (_parent: unknown,args:{id: string}): Promise<boolean>=>{
+      await prisma.bookmark.delete({where: {
+        id: args.id,
+      }});
+      return true;
+    },
   },
 
   Folder: {
