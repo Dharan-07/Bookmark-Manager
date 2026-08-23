@@ -33,9 +33,9 @@ export const resolvers = {
     },
 
     bookmarks: async (
-      _parent: unknown, 
-      args: { 
-        folderId?: string; 
+      _parent: unknown,
+      args: {
+        folderId?: string;
         search?: string;
         take?: number;
         cursor?: string
@@ -60,14 +60,14 @@ export const resolvers = {
 
         take: args.take,
 
-        ...(args.cursor?
+        ...(args.cursor ?
           {
-            cursor:{
+            cursor: {
               id: args.cursor
             },
             skip: 1,
           }
-          :{}),
+          : {}),
         orderBy: [
           { createdAt: "asc" },
           { id: "asc" }
@@ -81,9 +81,12 @@ export const resolvers = {
       _parent: unknown,
       args: { name: string }
     ) => {
+      if (!args.name.trim()) {
+        throw new Error("Folder name cannot be empty")
+      }
       return prisma.folder.create({
         data: {
-          name: args.name,
+          name: args.name.trim(),
         },
         include: {
           bookmarks: true,
@@ -100,9 +103,25 @@ export const resolvers = {
         folderId: string;
       }
     ) => {
+
+      if (!args.title.trim()) {
+        throw new Error("Bookmark title cannot be empty");
+      }
+
+      let parsedUrl : URL;
+
+      try {
+        parsedUrl = new URL(args.url);
+      } catch {
+        throw new Error("Invalid URL");
+      }
+
+      if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+        throw new Error("URL must use http or https");
+      }
       return prisma.bookmark.create({
         data: {
-          title: args.title,
+          title: args.title.trim(),
           url: args.url,
           tags: args.tags ?? [],
           folderId: args.folderId,
