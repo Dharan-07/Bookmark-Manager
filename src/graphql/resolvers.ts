@@ -89,9 +89,14 @@ export const resolvers = {
     },
     
     deleteBookmark: async (_parent: unknown,args:{id: string}): Promise<boolean>=>{
-      await prisma.bookmark.delete({where: {
+      const bookmark = await prisma.bookmark.findUnique({where: {
         id: args.id,
       }});
+
+      if(!bookmark){throw new Error("bookmark not found")}
+
+      await prisma.bookmark.delete({where:{id: args.id}})
+
       return true;
     },
   },
