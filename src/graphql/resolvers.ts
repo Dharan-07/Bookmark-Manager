@@ -31,6 +31,20 @@ export const resolvers = {
         },
       });
     },
+
+    bookmarks: async (_parent: unknown, args:{folderId?: string})=>{
+      return prisma.bookmark.findMany({
+        where: args.folderId
+        ?{
+          folderId: args.folderId
+        }
+        : undefined,
+        orderBy: [
+          {createdAt:"asc"},
+          {id:"asc"}
+        ]
+      })
+    }
   },
 
   Mutation: {
