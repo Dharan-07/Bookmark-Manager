@@ -1,4 +1,4 @@
-````
+
 # Bookmark Manager — Implementation Walkthrough
 
 ## What I Built
