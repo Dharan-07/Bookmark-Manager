@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "bun run --watch src/server.ts",
+    "gendb": "prisma generate && prisma migrate dev",
     "typecheck": "tsc --noEmit",
     "test": "bun test"
   },
