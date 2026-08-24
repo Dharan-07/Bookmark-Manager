@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "EREN": "bun run --watch src/server.ts",
+    "dev": "bun run --watch src/server.ts",
     "typecheck": "tsc --noEmit",
     "test": "bun test"
   },

@@ -1,4 +1,5 @@
 import { prisma } from "../db/prisma";
+import { AppError } from "./errors";
 
 type FolderWithBookmarks = {
   createdAt: Date;
@@ -82,7 +83,7 @@ export const resolvers = {
       args: { name: string }
     ) => {
       if (!args.name.trim()) {
-        throw new Error("Folder name cannot be empty")
+        throw new AppError("Folder name cannot be empty", "INVALID_INPUT");
       }
       return prisma.folder.create({
         data: {
@@ -105,19 +106,22 @@ export const resolvers = {
     ) => {
 
       if (!args.title.trim()) {
-        throw new Error("Bookmark title cannot be empty");
+        throw new AppError("Bookmark title cannot be empty", "INVALID_INPUT");
       }
 
-      let parsedUrl : URL;
+      let parsedUrl: URL;
 
       try {
         parsedUrl = new URL(args.url);
       } catch {
-        throw new Error("Invalid URL");
+        throw new AppError("Invalid URL", "INVALID_INPUT");
       }
 
       if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
-        throw new Error("URL must use http or https");
+        throw new AppError(
+          "URL must use http or https",
+          "INVALID_INPUT",
+        );
       }
       return prisma.bookmark.create({
         data: {
@@ -138,12 +142,49 @@ export const resolvers = {
         tags?: string[];
       }
     ) => {
+
+      const bookmark = await prisma.bookmark.findUnique({
+        where: {
+          id: args.id,
+        },
+      });
+
+      if (!bookmark) {
+        throw new AppError("Bookmark not found", "NOT_FOUND");
+      }
+
+      if (args.title !== undefined && !args.title.trim()) {
+        throw new AppError(
+          "Bookmark title cannot be empty",
+          "INVALID_INPUT",
+        );
+      }
+
+      if (args.url !== undefined) {
+        let parsedUrl: URL;
+
+        try {
+          parsedUrl = new URL(args.url);
+        } catch {
+          throw new AppError("Invalid URL", "INVALID_INPUT")
+        }
+        if (
+          parsedUrl.protocol !== "http:" &&
+          parsedUrl.protocol !== "https:"
+        ) {
+          throw new AppError(
+            "URL must use http or https",
+            "INVALID_INPUT",
+          );
+        }
+      }
+
       return prisma.bookmark.update({
         where: {
           id: args.id,
         },
         data: {
-          title: args.title,
+          title: args.title?.trim(),
           url: args.url,
           tags: args.tags,
         },
@@ -157,7 +198,7 @@ export const resolvers = {
         }
       });
 
-      if (!bookmark) { throw new Error("bookmark not found") }
+      if (!bookmark) { throw new AppError("Bookmark not found", "NOT_FOUND"); }
 
       await prisma.bookmark.delete({ where: { id: args.id } })
 
@@ -168,7 +209,28 @@ export const resolvers = {
       id: string;
       folderId: string;//target_folder_id 
     }) => {
-      const result = prisma.bookmark.update({
+
+      const bookmark = await prisma.bookmark.findUnique({
+        where: {
+          id: args.id,
+        },
+      });
+
+      if (!bookmark) {
+        throw new AppError("Bookmark not found", "NOT_FOUND");
+      }
+
+      const folder = await prisma.bookmark.findUnique({
+        where: {
+          id: args.folderId,
+        },
+      });
+
+      if (!folder) {
+        throw new AppError("Targeted folder not found", "NOT_FOUND");
+      }
+
+      const result = await prisma.bookmark.update({
         where: { id: args.id },
         data: { folderId: args.folderId }
       })
