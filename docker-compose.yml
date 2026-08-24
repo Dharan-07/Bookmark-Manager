@@ -4,7 +4,7 @@ services:
     restart: always
     environment:
       POSTGRES_USER: bookmark_user
-      POSTGRES_PASSWORD: dharan_0702
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: bookmark_db
     ports:
       - "5432:5432"
