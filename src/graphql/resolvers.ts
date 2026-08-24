@@ -142,12 +142,49 @@ export const resolvers = {
         tags?: string[];
       }
     ) => {
+
+      const bookmark = await prisma.bookmark.findUnique({
+        where: {
+          id: args.id,
+        },
+      });
+
+      if (!bookmark) {
+        throw new AppError("Bookmark not found", "NOT_FOUND");
+      }
+
+      if (args.title !== undefined && !args.title.trim()) {
+        throw new AppError(
+          "Bookmark title cannot be empty",
+          "INVALID_INPUT",
+        );
+      }
+
+      if (args.url !== undefined) {
+        let parsedUrl: URL;
+
+        try {
+          parsedUrl = new URL(args.url);
+        } catch {
+          throw new AppError("Invalid URL", "INVALID_INPUT")
+        }
+        if (
+          parsedUrl.protocol !== "http:" &&
+          parsedUrl.protocol !== "https:"
+        ) {
+          throw new AppError(
+            "URL must use http or https",
+            "INVALID_INPUT",
+          );
+        }
+      }
+
       return prisma.bookmark.update({
         where: {
           id: args.id,
         },
         data: {
-          title: args.title,
+          title: args.title?.trim(),
           url: args.url,
           tags: args.tags,
         },
