@@ -1,4 +1,4 @@
-```markdown
+```
 # Bookmark Manager GraphQL API
 
 ## 1. Overview
@@ -88,14 +88,14 @@ bun install
 # copy environment variables and fill in your own password
 cp .env.example .env
 
-# apply database migrations
-bunx prisma migrate dev
+# generate Prisma Client and apply migrations
+bun run gendb
 
 # start the development server
 bun run dev
 ```
 
-There is currently no `gendb` script; database setup is done directly via `bunx prisma migrate dev`, which applies the existing Prisma migrations to your PostgreSQL container.
+`bun run gendb` generates the Prisma Client and applies the existing Prisma migrations to your PostgreSQL container.
 
 ### `.env` and `.env.example`
 
@@ -113,16 +113,16 @@ DATABASE_URL=postgresql://bookmark_user:YOUR_PASSWORD@localhost:5432/bookmark_db
 
 ## 8. Database
 
-PostgreSQL runs locally via Docker Compose (`docker-compose.yml`). The database schema is defined and managed entirely through Prisma:
+PostgreSQL runs locally through Docker Compose (`docker-compose.yml`). The database schema is defined and managed entirely through Prisma:
 
 - Schema definition: `prisma/schema.prisma`
-- Migrations: `prisma/migrations/` — generated using Prisma's migration tooling (`prisma migrate dev`), not written or edited by hand
+- Migrations: stored in `prisma/migrations/`, generated using Prisma's migration tooling (`prisma migrate dev`), not written or edited by hand
 - Prisma Client is generated from the schema and used by the application to query the database
 
-To apply migrations to a fresh database:
+The normal setup command for this is:
 
 ```bash
-bunx prisma migrate dev
+bun run gendb
 ```
 
 ## 9. Running the Server
