@@ -1,4 +1,4 @@
-```markdown
+
 # Bookmark Manager GraphQL API
 
 ## 1. Overview
