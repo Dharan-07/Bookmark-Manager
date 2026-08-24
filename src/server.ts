@@ -1,6 +1,7 @@
 import { createSchema, createYoga } from "graphql-yoga";
 import { readFile } from "node:fs/promises";
 import { resolvers } from "./graphql/resolvers";
+import { AppError } from "./graphql/errors";
 
 const typeDefs = await readFile(
   new URL("./graphql/schema.graphql", import.meta.url),
