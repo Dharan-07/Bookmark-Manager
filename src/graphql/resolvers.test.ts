@@ -94,11 +94,26 @@ describe("updateBookmark", () => {
     });
 
     test("rejects an empty title", async () => {
+        const folder = await prisma.folder.create({
+            data: {
+                name: "Update Test Folder",
+            },
+        });
+
+        const bookmark = await prisma.bookmark.create({
+            data: {
+                title: "Original Bookmark",
+                url: "https://example.com",
+                tags: [],
+                folderId: folder.id,
+            },
+        });
+
         try {
             await resolvers.Mutation.updateBookmark(
                 {},
                 {
-                    id: "1237a6ce-de20-4367-bdfb-b367b01799ad",
+                    id: bookmark.id,
                     title: "   ",
                 },
             );
@@ -121,15 +136,42 @@ describe("updateBookmark", () => {
             expect(graphqlError.extensions?.code).toBe(
                 "INVALID_INPUT",
             );
+        } finally {
+            await prisma.bookmark.delete({
+                where: {
+                    id: bookmark.id,
+                },
+            });
+
+            await prisma.folder.delete({
+                where: {
+                    id: folder.id,
+                },
+            });
         }
     });
 
     test("rejects an invalid URL", async () => {
+        const folder = await prisma.folder.create({
+            data: {
+                name: "Update URL Test Folder",
+            },
+        });
+
+        const bookmark = await prisma.bookmark.create({
+            data: {
+                title: "Original Bookmark",
+                url: "https://example.com",
+                tags: [],
+                folderId: folder.id,
+            },
+        });
+
         try {
             await resolvers.Mutation.updateBookmark(
                 {},
                 {
-                    id: "1237a6ce-de20-4367-bdfb-b367b01799ad",
+                    id: bookmark.id,
                     url: "not-a-valid-url",
                 },
             );
@@ -146,9 +188,22 @@ describe("updateBookmark", () => {
             };
 
             expect(graphqlError.message).toBe("Invalid URL");
+
             expect(graphqlError.extensions?.code).toBe(
                 "INVALID_INPUT",
             );
+        } finally {
+            await prisma.bookmark.delete({
+                where: {
+                    id: bookmark.id,
+                },
+            });
+
+            await prisma.folder.delete({
+                where: {
+                    id: folder.id,
+                },
+            });
         }
     });
 });
