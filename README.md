@@ -233,14 +233,33 @@ None of the above are currently implemented; they are intentionally out of scope
 Implemented:
 - GraphQL API (Yoga, schema-first)
 - PostgreSQL + Prisma with migrations
-- Folder and bookmark queries, including nested folder → bookmarks
+- Docker Compose PostgreSQL setup
+- Folder and bookmark queries
+- Nested folder → bookmarks queries
 - Bookmark search and folder filtering
+- Bookmark create, update, delete, and move operations
 - Cursor-based pagination
 - Input validation and structured GraphQL errors
 - Resolver/unit tests
 - PostgreSQL integration test
+- TypeScript strict mode
+- GitHub Actions CI
 
-Remaining:
-- Optional bonus features (sanity script, Dockerfile, GitHub Actions)
-```
+Assignment requirements:
+✓ GraphQL API
+✓ PostgreSQL + Prisma
+✓ Docker Compose
+✓ Cursor-based pagination
+✓ Validation and error handling
+✓ Unit tests
+✓ PostgreSQL integration test
+✓ README documentation
+✓ Incremental Git history
+✓ Pull Request
+
+Optional bonus:
+✓ GitHub Actions
+✗ Sanity script
+✗ Dockerfile
+
 ```
