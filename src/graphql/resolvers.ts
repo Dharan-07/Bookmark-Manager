@@ -209,6 +209,27 @@ export const resolvers = {
       id: string;
       folderId: string;//target_folder_id 
     }) => {
+
+      const bookmark = await prisma.bookmark.findUnique({
+        where: {
+          id: args.id,
+        },
+      });
+
+      if (!bookmark) {
+        throw new AppError("Bookmark not found", "NOT_FOUND");
+      }
+
+      const folder = await prisma.bookmark.findUnique({
+        where: {
+          id: args.folderId,
+        },
+      });
+
+      if (!folder) {
+        throw new AppError("Targeted folder not found", "NOT_FOUND");
+      }
+
       const result = await prisma.bookmark.update({
         where: { id: args.id },
         data: { folderId: args.folderId }
